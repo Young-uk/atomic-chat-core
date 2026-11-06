@@ -4,6 +4,7 @@
  * Plain data behind small methods; the locks live with the code that holds them.
  */
 
+import { dirname, join } from 'node:path'
 import type { AudioPaths } from '../config/index.js'
 import type {
   AudioCapabilities,
@@ -72,6 +73,10 @@ export class AudioState {
   outputDir(): string {
     const chosen = this.outputDirOverride?.trim()
     return chosen ? chosen : this.paths.defaultOutputDir
+  }
+
+  transientOutputDir(): string {
+    return join(dirname(this.paths.defaultOutputDir), 'chat-speech')
   }
 
   setModelState(state: AudioModelState, error?: AudioErrorBody): void {

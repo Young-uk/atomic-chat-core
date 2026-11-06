@@ -479,7 +479,10 @@ export class AudioService {
   }
 
   deleteGalleryItem(id: string): Promise<void> {
-    return this.deps.gallery.delete(this.state.outputDir(), id)
+    return this.deps.gallery.delete(
+      this.state.job(id)?.request.transient ? this.state.transientOutputDir() : this.state.outputDir(),
+      id
+    )
   }
 
   // --- lifecycle -----------------------------------------------------------------------------------

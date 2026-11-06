@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, readdir, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -187,6 +187,16 @@ describe('jobs through the service', () => {
     expect(page.total).toBe(2)
     await w.service.deleteGalleryItem(job.id)
     expect((await w.service.gallery({ offset: 0, limit: 10 })).total).toBe(1)
+  })
+
+  it('keeps one-time speech out of the gallery and discards the clip on request', async () => {
+    const w = await world()
+    await w.service.loadModel(speechLoad())
+    const outcome = await w.service.runJob('speech', { text: 'Read aloud', transient: true })
+    expect(await readFile(outcome.item.path)).toEqual(outcome.wav)
+    expect((await w.service.gallery({ offset: 0, limit: 10 })).total).toBe(0)
+    await w.service.deleteGalleryItem(outcome.job.id)
+    await expect(readFile(outcome.item.path)).rejects.toMatchObject({ code: 'ENOENT' })
   })
 
   it('cancels a generating job by stopping the server, and an unload cancels it too', async () => {

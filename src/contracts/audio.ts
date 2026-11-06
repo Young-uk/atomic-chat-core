@@ -163,6 +163,8 @@ export interface AudioCapabilities {
 export type AudioSource = { path: string } | { base64: string }
 
 export interface AudioGenerateRequest {
+  /** Store this clip separately from the Audios gallery for one-time playback. */
+  transient?: boolean
   /** Speech: the words to say. Music and effects: the description of the sound. */
   text: string
   /** Speech: a built-in voice id; absent for the model's default. */

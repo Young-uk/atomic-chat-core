@@ -150,6 +150,11 @@ export function parseLoadAudioModelRequest(body: unknown): LoadAudioModelRequest
 export function parseAudioGenerateRequest(body: unknown): AudioGenerateRequest {
   const source = fields(body, 'request')
   const request: AudioGenerateRequest = { text: nonEmpty(source['text'], 'text') }
+  const transient = present(source, 'transient')
+  if (transient !== undefined) {
+    if (typeof transient !== 'boolean') invalid('transient', 'a boolean')
+    request.transient = transient
+  }
   copy(request, 'voice', source, string)
   copy(request, 'voiceRef', source, audioSource)
   copy(request, 'referenceText', source, string)

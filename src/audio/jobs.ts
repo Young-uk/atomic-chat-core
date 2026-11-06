@@ -397,7 +397,8 @@ async function execute(
     createdAtMs: record.job.createdAtMs,
     durationMs,
   })
-  const item = await deps.gallery.save(state.outputDir(), recipe, wav)
+  const outputDir = request.transient ? state.transientOutputDir() : state.outputDir()
+  const item = await deps.gallery.save(outputDir, recipe, wav)
   return { item, wav }
 }
 
