@@ -639,7 +639,8 @@ describe.skipIf(!existsSync(BIN))('the compiled core as an owner', () => {
     const table = run(['models', 'list'])
     expect(table.stdout).toContain('MODEL ID')
 
-    const status = run(['server', 'status'])
+    // Port zero cannot be assigned to a listening service. Avoid probing the user's API server.
+    const status = run(['server', 'status', '--port', '0'])
     expect(status.status, 'no server means exit 1').toBe(1)
     expect(status.stdout).toContain('No Local API Server')
   })
